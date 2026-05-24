@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  
+  zookeeper:
+    image: zookeeper:3.9.5
+    container_name: ualspeed-zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+    - ualspeed-net
+
+
+  redis:
+    image: redis:7.2
+    container_name: ualspeed-redis
+    ports:
+      - "6379:6379"
+    networks:
+    - ualspeed-net  
+
+  mysql-master:
+    image: mysql:8.0
+    container_name: ualspeed-mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-master-data:/var/lib/mysql
+    networks:
+    - ualspeed-net
+
+  mysql-slave:
+    image: mysql:8.0
+    container_name: ualspeed-mysql-slave
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-slave-data:/var/lib/mysql
+    depends_on:
+      - mysql-master
+    networks:
+      - ualspeed-net
+    
+  networks:
+    ualspeed-net:
+      driver: bridge
+
+  volumes:
+    mysql-master-data:
+    mysql-slave-data:
