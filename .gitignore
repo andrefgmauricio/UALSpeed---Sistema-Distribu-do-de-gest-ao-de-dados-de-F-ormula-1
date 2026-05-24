@@ -1,0 +1,10 @@
+.mysql_data/
+mysql-master-data/
+mysql-slave-data/
+
+__pycache__/
+*.pyc
+.env
+
+logs/
+*.log
