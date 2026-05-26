@@ -46,10 +46,10 @@ services:
     networks:
       - ualspeed-net
     
-  networks:
-    ualspeed-net:
-      driver: bridge
+networks:
+  ualspeed-net:
+    driver: bridge
 
-  volumes:
-    mysql-master-data:
-    mysql-slave-data:
+volumes:
+  mysql-master-data:
+  mysql-slave-data:
