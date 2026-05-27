@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 import pymysql
 from flask import Flask, request, jsonify
+from kazoo.client import KazooClient
 import redis
 
 
@@ -21,6 +22,13 @@ def get_db_connection():
 
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
+zk = KazooClient(hosts='localhost:2181')
+zk.start()
+
+zk.ensure_path("/ualspeed/api")
+if not zk.exists("/ualspeed/api/servidor_1"):
+    zk.create("/ualspeed/api/servidor_1", b"online", ephemeral=True)
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -37,7 +45,7 @@ def receber_telemetria():
     velocidade = dados['velocidade']
     rpm = dados.get('rpm', 0)
     combustivel = dados.get('combustivel', 0.0)
-    
+
     try:
         conexao = get_db_connection()
         with conexao.cursor() as cursor:
